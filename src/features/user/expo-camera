@@ -1,0 +1,8 @@
+import { Camera } from 'expo-camera';
+// ... dentro del componente
+const [permission, requestPermission] = Camera.useCameraPermissions();
+
+if (!permission) return <View />; // Cargando permisos
+if (!permission.granted) {
+  return <Button title="Otorgar Permiso de Cámara" onPress={requestPermission} />;
+}
