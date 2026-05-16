@@ -5,6 +5,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 
+import { checkPersistedAuthAsync } from '../features/auth/authSlice'; // Importamos el Thunk de control
+import Loader from '../components/Loader'; // Reutilizamos nuestro loader corporativo
+
 // --- IMPORTACIÓN DE PANTALLAS ---
 import CategoriesScreen from '../screens/CategoriesScreen';
 import ItemListScreen from '../screens/ItemListScreen';
@@ -130,19 +133,24 @@ const ShopTabNavigator = () => {
  * Aplica el patrón de renderizado condicional según el estado de Redux Auth.
  */
 const MainNavigator = () => {
-  // Suscripción al estado de seguridad global
-  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  
+  // Extraemos tanto el token como el estado de verificación inicial
+  const { token, isCheckingPersistedAuth } = useSelector((state) => state.auth);
+
+  // Al montar la raíz de la navegación, disparamos la lectura del chip de memoria
+  useEffect(() => {
+    dispatch(checkPersistedAuthAsync());
+  }, [dispatch]);
+
+  // Si Git o el hardware móvil están leyendo el almacenamiento local, bloqueamos el árbol visual
+  if (isCheckingPersistedAuth) {
+    return <Loader message="Verificando credenciales seguras..." />;
+  }
 
   return (
     <NavigationContainer>
-      {/* 
-        Garantía de Aislamiento de Rutas:
-        Si el token es null, no hay forma física de navegar al ShopTabNavigator,
-        blindando la aplicación contra fugas de datos en el cliente.
-      */}
       {token ? <ShopTabNavigator /> : <AuthStack />}
     </NavigationContainer>
   );
 };
-
-export default MainNavigator;
