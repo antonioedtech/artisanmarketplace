@@ -1,0 +1,44 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "category": "Cerámica",
+      "title": "Jarrón de Barro Cocido",
+      "description": "Jarrón artesanal hecho a mano con técnicas ancestrales de horneado a leña.",
+      "price": 4500,
+      "image": "https://picsum.photos/id/20/400/400"
+    },
+    {
+      "id": 2,
+      "category": "Textiles",
+      "title": "Manta de Lana de Alpaca",
+      "description": "Tejida en telar de cintura con fibras orgánicas y tintes naturales.",
+      "price": 12000,
+      "image": "https://picsum.photos/id/100/400/400"
+    },
+    {
+      "id": 3,
+      "category": "Madera",
+      "title": "Tabla de Picada de Roble",
+      "description": "Madera maciza curada con aceites vegetales, ideal para alta gastronomía.",
+      "price": 3200,
+      "image": "https://picsum.photos/id/40/400/400"
+    },
+    {
+      "id": 4,
+      "category": "Joyas",
+      "title": "Anillo de Plata y Ópalo",
+      "description": "Pieza única forjada en plata 925 con piedra engarzada.",
+      "price": 8500,
+      "image": "https://picsum.photos/id/160/400/400"
+    },
+    {
+      "id": 5,
+      "category": "Cuero",
+      "title": "Morral de Cuero Vacuno",
+      "description": "Cuero curtido al vegetal con costuras reforzadas a mano.",
+      "price": 9800,
+      "image": "https://picsum.photos/id/175/400/400"
+    }
+  ]
+}
