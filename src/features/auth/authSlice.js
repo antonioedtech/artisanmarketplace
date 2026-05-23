@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, isAnyOf } from '@reduxjs/toolkit';
 import { authService } from '../../services/authService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -28,13 +28,18 @@ export const signUpAsync = createAsyncThunk(
   'auth/signUpAsync',
   async ({ email, password }, { rejectWithValue }) => {
     try {
+      console.log("Intentando registro para:", email);
       const data = await authService.signUp(email, password);
       const sessionData = { token: data.idToken, user: data.email, uid: data.localId };
       
-      // Persistimos en hardware antes de actualizar memoria
       await AsyncStorage.setItem('@user_session', JSON.stringify(sessionData));
+      console.log("Registro exitoso y sesión guardada.");
       return sessionData;
     } catch (error) {
+      console.error("Error en signUpAsync:", error.message);
+      if (error.message) {
+        return rejectWithValue(error.message);
+      }
       return rejectWithValue(error.message);
     }
   }
@@ -51,6 +56,10 @@ export const signInAsync = createAsyncThunk(
       await AsyncStorage.setItem('@user_session', JSON.stringify(sessionData));
       return sessionData;
     } catch (error) {
+      // Si el error viene de authService, capturamos el mensaje específico (ej: EMAIL_EXISTS)
+      if (error.message) {
+        return rejectWithValue(error.message);
+      }
       return rejectWithValue(error.message);
     }
   }
@@ -97,13 +106,20 @@ const authSlice = createSlice({
       .addCase(checkPersistedAuthAsync.rejected, (state) => {
         state.isCheckingPersistedAuth = false;
       })
+      // Logout (Movido aquí para cumplir con el orden: Cases antes que Matchers)
+      .addCase(logoutAsync.fulfilled, (state) => {
+        state.user = null;
+        state.token = null;
+        state.uid = null;
+        state.status = 'idle';
+      })
       // Registro y Login
       .addMatcher(
-        (action) => [signUpAsync.pending, signInAsync.pending].includes(action.type),
+        isAnyOf(signUpAsync.pending, signInAsync.pending),
         (state) => { state.status = 'loading'; state.error = null; }
       )
       .addMatcher(
-        (action) => [signUpAsync.fulfilled, signInAsync.fulfilled].includes(action.type),
+        isAnyOf(signUpAsync.fulfilled, signInAsync.fulfilled),
         (state, action) => {
           state.status = 'success';
           state.token = action.payload.token;
@@ -112,19 +128,12 @@ const authSlice = createSlice({
         }
       )
       .addMatcher(
-        (action) => [signUpAsync.rejected, signInAsync.rejected].includes(action.type),
+        isAnyOf(signUpAsync.rejected, signInAsync.rejected),
         (state, action) => {
           state.status = 'failed';
           state.error = action.payload;
         }
-      )
-      // Logout
-      .addCase(logoutAsync.fulfilled, (state) => {
-        state.user = null;
-        state.token = null;
-        state.uid = null;
-        state.status = 'idle';
-      });
+      );
   }
 });
 

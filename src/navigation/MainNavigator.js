@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
+import { StyleSheet, Pressable } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector, useDispatch } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 
-import { checkPersistedAuthAsync } from '../features/auth/authSlice'; // Importamos el Thunk de control
+import { checkPersistedAuthAsync, logoutAsync } from '../features/auth/authSlice'; // Importamos Thunks
+import { getProductsFromDb } from '../features/shop/shopSlice'; // Acción para cargar productos
 import Loader from '../components/Loader'; // Reutilizamos nuestro loader corporativo
 
 // --- IMPORTACIÓN DE PANTALLAS ---
@@ -25,31 +27,41 @@ const Tab = createBottomTabNavigator();
  * 1. Stack de la Tienda (ShopStack)
  * Gestiona el flujo lineal de descubrimiento de productos.
  */
-const ShopStack = () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#f4511e' },
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontWeight: 'bold' },
-    }}
-  >
-    <Stack.Screen 
-      name="Categories" 
-      component={CategoriesScreen} 
-      options={{ title: 'Artesanías' }} 
-    />
-    <Stack.Screen 
-      name="Products" 
-      component={ItemListScreen} 
-      options={({ route }) => ({ title: route.params?.categoryTitle || 'Productos' })} 
-    />
-    <Stack.Screen 
-      name="ItemDetail" 
-      component={ItemDetailScreen} 
-      options={{ title: 'Detalle del Producto' }} 
-    />
-  </Stack.Navigator>
-);
+const ShopStack = () => {
+  const dispatch = useDispatch();
+
+  return (
+    <Stack.Navigator
+      screenOptions={styles.headerPrimary}
+    >
+      <Stack.Screen 
+        name="Categories" 
+        component={CategoriesScreen} 
+        options={{ 
+          title: 'Artesanías',
+          headerRight: () => (
+            <Pressable 
+              onPress={() => dispatch(logoutAsync())}
+              style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1, marginRight: 10 })}
+            >
+              <Ionicons name="log-out-outline" size={24} color="white" />
+            </Pressable>
+          )
+        }} 
+      />
+      <Stack.Screen 
+        name="Products" 
+        component={ItemListScreen} 
+        options={({ route }) => ({ title: route.params?.categoryTitle || 'Productos' })} 
+      />
+      <Stack.Screen 
+        name="ItemDetail" 
+        component={ItemDetailScreen} 
+        options={{ title: 'Detalle del Producto' }} 
+      />
+    </Stack.Navigator>
+  );
+};
 
 /**
  * 2. Stack de Autenticación (AuthStack)
@@ -57,10 +69,7 @@ const ShopStack = () => (
  */
 const AuthStack = () => (
   <Stack.Navigator
-    screenOptions={{
-      headerStyle: { backgroundColor: '#333' },
-      headerTintColor: '#fff',
-    }}
+    screenOptions={styles.headerDark}
   >
     <Stack.Screen 
       name="Login" 
@@ -70,7 +79,7 @@ const AuthStack = () => (
     <Stack.Screen 
       name="Register" 
       component={RegisterScreen} 
-      options={{ title: 'Registro de Agencia' }} 
+      options={{ title: 'Crear Cuenta' }} 
     />
   </Stack.Navigator>
 );
@@ -110,8 +119,7 @@ const ShopTabNavigator = () => {
           title: 'Carrito',
           tabBarBadge: totalItems > 0 ? totalItems : null, // UX Reactiva
           headerShown: true,
-          headerStyle: { backgroundColor: '#f4511e' },
-          headerTintColor: '#fff'
+          ...styles.headerPrimary
         }} 
       />
       <Tab.Screen 
@@ -120,13 +128,24 @@ const ShopTabNavigator = () => {
         options={{ 
           title: 'Talleres',
           headerShown: true,
-          headerStyle: { backgroundColor: '#f4511e' },
-          headerTintColor: '#fff'
+          ...styles.headerPrimary
         }} 
       />
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  headerPrimary: {
+    headerStyle: { backgroundColor: '#f4511e' },
+    headerTintColor: '#fff',
+    headerTitleStyle: { fontWeight: 'bold' },
+  },
+  headerDark: {
+    headerStyle: { backgroundColor: '#333' },
+    headerTintColor: '#fff',
+  },
+});
 
 /**
  * 4. Contenedor Raíz (MainNavigator)
@@ -140,12 +159,20 @@ const MainNavigator = () => {
 
   // Al montar la raíz de la navegación, disparamos la lectura del chip de memoria
   useEffect(() => {
+    console.log("MainNavigator montado. Iniciando verificación de sesión...");
     dispatch(checkPersistedAuthAsync());
   }, [dispatch]);
 
+  // Una vez autenticado, disparamos la carga de productos de Firebase Realtime Database
+  useEffect(() => {
+    if (token) {
+      dispatch(getProductsFromDb()); 
+    }
+  }, [token, dispatch]);
+
   // Si Git o el hardware móvil están leyendo el almacenamiento local, bloqueamos el árbol visual
   if (isCheckingPersistedAuth) {
-    return <Loader message="Verificando credenciales seguras..." />;
+    return <Loader message="ArtisanMarket: Validando acceso..." />;
   }
 
   return (
@@ -154,3 +181,5 @@ const MainNavigator = () => {
     </NavigationContainer>
   );
 };
+
+export default MainNavigator;

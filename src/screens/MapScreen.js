@@ -56,7 +56,7 @@ const MapScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { ...StyleSheet.absoluteFillObject, justifyContent: 'end', alignItems: 'center' },
+  container: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', alignItems: 'center' },
   map: { ...StyleSheet.absoluteFillObject },
 });
 

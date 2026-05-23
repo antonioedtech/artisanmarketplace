@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { FlatList, StyleSheet, View, Text, Image, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { setProductSelected } from '../features/shop/shopSlice';
+import Loader from '../components/Loader';
 
 const ItemListScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
@@ -9,6 +10,7 @@ const ItemListScreen = ({ navigation, route }) => {
   // Obtenemos los productos ya filtrados por la categoría seleccionada en el paso anterior
   const products = useSelector((state) => state.shop.productsFiltered);
   const category = useSelector((state) => state.shop.categorySelected);
+  const status = useSelector((state) => state.shop.status);
 
   /**
    * Navegación al detalle del producto.
@@ -33,6 +35,9 @@ const ItemListScreen = ({ navigation, route }) => {
       </View>
     </TouchableOpacity>
   );
+
+  // Si los productos se están descargando de Firebase, mostramos el Loader
+  if (status === 'loading') return <Loader message={`Buscando ${category}...`} />;
 
   return (
     <View style={styles.container}>

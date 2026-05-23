@@ -1,9 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
-// Reemplaza estos valores con los de tu consola de Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyApeuN_g43wDAkbN-4ae_FGlbukx2egXrw",
+export const API_KEY = 'AIzaSyApeuN_g43wDAkbN-4ae_FGlbukx2egXrw';
+
+/**
+ * Configuración oficial de Firebase. 
+ * Completar estos campos con la información de tu consola de Firebase:
+ * Configuración del proyecto -> General -> Tus apps
+ */
+export const firebaseConfig = {
+  apiKey: API_KEY,
   authDomain: "artisanmarket-coderhouse.firebaseapp.com",
   databaseURL: "https://artisanmarket-coderhouse-default-rtdb.firebaseio.com",
   projectId: "artisanmarket-coderhouse",
@@ -13,8 +19,6 @@ const firebaseConfig = {
   measurementId: "G-MYTSJ0YFTN"
 };
 
-// Inicializamos Firebase
+// Inicializamos la App de Firebase y la base de datos Realtime
 const app = initializeApp(firebaseConfig);
-
-// Inicializamos Realtime Database y la exportamos para su uso
 export const db = getDatabase(app);

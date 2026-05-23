@@ -1,5 +1,6 @@
+import { StyleSheet, View, Text, Alert, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { addItem } from '../features/cart/cartSlice';
+import { addItemAsync } from '../features/cart/cartSlice';
 
 // 2. Dentro del componente ItemDetailScreen:
 const ItemDetailScreen = () => {
@@ -9,7 +10,7 @@ const ItemDetailScreen = () => {
   const handleAddToCart = () => {
     if (product) {
       // Despachamos el producto actual al carrito
-      dispatch(addItem(product));
+      dispatch(addItemAsync(product));
       Alert.alert("Éxito", `${product.title} se añadió al carrito.`);
     }
   };

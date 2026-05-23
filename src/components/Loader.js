@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text } from 'react-native';
 
-const Loader = ({ message = "Cargando artesanías..." }) => (
-  <View style={styles.container}>
-    <ActivityIndicator size="large" color="#f4511e" />
-    <Text style={styles.text}>{message}</Text>
-  </View>
-);
+const Loader = ({ message }) => {
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#f4511e" />
+      <Text style={styles.text}>{message || "Cargando ArtisanMarket..."}</Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -17,8 +19,8 @@ const styles = StyleSheet.create({
   },
   text: {
     marginTop: 10,
-    fontSize: 16,
     color: '#666',
+    fontSize: 16,
   },
 });
 

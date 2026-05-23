@@ -74,5 +74,99 @@ const CartScreen = () => {
   );
 };
 
-// ... Mantenemos los mismos estilos de StyleSheet que definimos anteriormente ...
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  listContent: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
+  card: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  infoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  price: {
+    fontSize: 14,
+    color: '#f4511e',
+    marginTop: 5,
+  },
+  quantity: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 2,
+  },
+  deleteButton: {
+    padding: 8,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: '#999',
+    marginTop: 10,
+  },
+  summaryContainer: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  summaryLabel: { fontSize: 16, color: '#555' },
+  summaryValue: { fontSize: 16, fontWeight: 'bold', color: '#333' },
+  totalLabel: { fontSize: 18, fontWeight: 'bold', color: '#333' },
+  totalValue: { fontSize: 18, fontWeight: 'bold', color: '#f4511e' },
+  checkoutButton: {
+    backgroundColor: '#f4511e',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  checkoutButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
+
 export default CartScreen;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FlatList, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCategorySelected, getProductsFromDb } from '../features/shop/shopSlice';
@@ -8,16 +8,7 @@ const CategoriesScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   
   // Extraemos estados desde Redux
-  const { categories, loading, error } = useSelector((state) => state.shop);
-
-  /**
-   * Hook de efecto: Disparador de datos.
-   * Justificación: useEffect con [] asegura que la petición a Firebase
-   * solo ocurra una vez al iniciar la aplicación, optimizando el ancho de banda.
-   */
-  useEffect(() => {
-    dispatch(getProductsFromDb());
-  }, [dispatch]);
+  const { categories, status, error } = useSelector((state) => state.shop);
 
   const onSelectCategory = (category) => {
     dispatch(setCategorySelected(category));
@@ -25,7 +16,7 @@ const CategoriesScreen = ({ navigation }) => {
   };
 
   // Gestión de estados asíncronos (Guard Clauses)
-  if (loading) return <Loader />;
+  if (status === 'loading') return <Loader message="Cargando categorías..." />;
   
   if (error) {
     return (
@@ -48,6 +39,9 @@ const CategoriesScreen = ({ navigation }) => {
             <Text style={styles.text}>{item}</Text>
           </TouchableOpacity>
         )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No se encontraron categorías disponibles.</Text>
+        }
       />
     </View>
   );
@@ -67,7 +61,8 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
   },
-  text: { fontSize: 18, fontWeight: 'bold' }
+  text: { fontSize: 18, fontWeight: 'bold', textAlign: 'center' },
+  emptyText: { textAlign: 'center', marginTop: 50, color: '#999' }
 });
 
 export default CategoriesScreen;
